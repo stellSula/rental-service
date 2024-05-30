@@ -4,7 +4,6 @@ import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.services.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +28,6 @@ public class ItemController {
 
     @GetMapping
     public List<Item> getAllItems() {
-        return itemService.getALlItems();
+        return itemService.getAllItems();
     }
 }

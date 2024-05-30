@@ -34,14 +34,13 @@ public class ItemServiceImpl implements ItemService {
             item.setName(requestItem.getName());
             item.setPricePerDay(requestItem.getPricePerDay());
             item.setInventoryNumber(requestItem.getInventoryNumber());
-            item.setItemCount(requestItem.getItemCount());
         }
 
         itemRepo.save(item);
     }
 
     @Override
-    public List<Item> getALlItems() {
+    public List<Item> getAllItems() {
         return itemRepo.findAll();
     }
 

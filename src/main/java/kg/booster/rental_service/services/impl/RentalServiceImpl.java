@@ -1,15 +1,15 @@
 package kg.booster.rental_service.services.impl;
 
-import kg.booster.rental_service.models.dtos.RentalDto;
 import kg.booster.rental_service.models.entities.Client;
-import kg.booster.rental_service.models.entities.Document;
 import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.models.entities.Rental;
 import kg.booster.rental_service.models.enums.Status;
+import kg.booster.rental_service.models.dtos.RentalDto;
 import kg.booster.rental_service.repositories.ClientRepo;
 import kg.booster.rental_service.repositories.DocumentRepo;
 import kg.booster.rental_service.repositories.ItemRepo;
 import kg.booster.rental_service.repositories.RentalRepo;
+import kg.booster.rental_service.services.ClientService;
 import kg.booster.rental_service.services.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -27,63 +28,43 @@ public class RentalServiceImpl implements RentalService {
 
     private final RentalRepo rentalRepo;
 
-    private final ClientRepo clientRepo;
-
     private final ItemRepo itemRepo;
 
-    private final DocumentRepo documentRepo;
+    private final ClientService clientService;
 
     @Override
     public void createRental(RentalDto rentalDto) {
-        Optional<Client> clientOptional = clientRepo.findByInn(rentalDto.getInn());
-        Client client;
-
-        if (clientOptional.isPresent()) {
-            client = clientOptional.get();
-
-            client.setFirstname(rentalDto.getFirstname());
-            client.setLastname(rentalDto.getLastname());
-            client.setPatronymic(rentalDto.getPatronymic());
-            client.setInn(rentalDto.getInn());
-            client.setAddress(rentalDto.getAddress());
-
-            Document document = client.getDocument();
-            document.setSeries(rentalDto.getSeries());
-            document.setNumber(rentalDto.getNumber());
-            documentRepo.save(document);
-        } else {
-            Document document = new Document();
-            document.setSeries(rentalDto.getSeries());
-            document.setNumber(rentalDto.getNumber());
-            documentRepo.save(document);
-
-            client = new Client();
-            client.setFirstname(rentalDto.getFirstname());
-            client.setLastname(rentalDto.getLastname());
-            client.setPatronymic(rentalDto.getPatronymic());
-            client.setInn(rentalDto.getInn());
-            client.setAddress(rentalDto.getAddress());
-            client.setDocument(document);
-        }
-        clientRepo.save(client);
+        Client client = clientService.createOrUpdateClient(rentalDto);
 
         Rental rental = new Rental();
         rental.setClient(client);
-        rental.setStartDate(rentalDto.getStartDate());
-        rental.setEndDate(rentalDto.getEndDate());
+        rental.setStartDate(rentalDto.startDate());
+        rental.setEndDate(rentalDto.endDate());
         rental.setStatus(Status.IN_PROCESS);
 
-        for (String inventoryNumber : rentalDto.getInventoryNumbers()) {
-            Optional<Item> itemOptional = itemRepo.findByInventoryNumber(inventoryNumber.trim());
-            if (itemOptional.isPresent()) {
-                Item item = itemOptional.get();
-                rental.getItems().add(item);
-            }
-        }
+        for (Map<String, Integer> itemEntry : rentalDto.itemInventoryNumbers())
+            for (Map.Entry<String, Integer> entry : itemEntry.entrySet()) {
+                String inventoryNumber = entry.getKey();
+                int itemCount = entry.getValue();
 
-        rental.setPrice(calculateTotalPrice(rentalDto.getStartDate(), rentalDto.getEndDate(), rental.getItems()));
+                Optional<Item> itemOptional = itemRepo.findByInventoryNumber(inventoryNumber.trim());
+                if (itemOptional.isPresent()) {
+                    Item item = itemOptional.get();
+
+                    item.setItemCount(itemCount);
+                    itemRepo.save(item);
+                    rental.getItems().add(item);
+                }
+            }
+
+        rental.setPrice(calculateTotalPrice(rentalDto.startDate(), rentalDto.endDate(), rental.getItems()));
 
         rentalRepo.save(rental);
+    }
+
+    @Override
+    public List<Rental> getRentalBy(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status) {
+        return null;
     }
 
     private double calculateTotalPrice(Date startDate, Date endDate, List<Item> items) {
@@ -93,20 +74,8 @@ public class RentalServiceImpl implements RentalService {
         );
 
         return items.stream()
-                .mapToDouble(item -> item.getPricePerDay() * rentalDays)
+                .mapToDouble(item -> (item.getPricePerDay() * rentalDays) * item.getItemCount())
                 .sum();
     }
 
-    private List<Item> getItems() {
-        return itemRepo.findAll();
-    }
 }
-
-
-
-//        rentalDto.getInventoryNumbers().stream()
-//                .map(String::trim)
-//                .map(itemRepo::findByInventoryNumber)
-//                .filter(Optional::isPresent)
-//                .map(Optional::get)
-//                .forEach(rental.getItems()::add);

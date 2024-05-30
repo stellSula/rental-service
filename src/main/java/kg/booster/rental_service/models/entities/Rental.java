@@ -48,4 +48,5 @@ public class Rental {
     @JsonProperty("item_inventory_numbers")
     List<Item> items = new ArrayList<>();
 
+
 }

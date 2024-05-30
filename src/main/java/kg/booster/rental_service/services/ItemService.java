@@ -8,6 +8,6 @@ public interface ItemService {
 
     void createItem(Item item);
 
-    List<Item> getALlItems();
+    List<Item> getAllItems();
 
 }
