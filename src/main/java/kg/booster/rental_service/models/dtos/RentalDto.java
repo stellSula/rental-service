@@ -64,7 +64,7 @@ public record RentalDto(
         LocalDate givenStartDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate givenEndDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        if (givenStartDate.isBefore(givenEndDate)) {
+        if (!givenStartDate.isBefore(givenEndDate)) {
             throw new BadParamsException("Start date cannot be larger than the current date");
         }
     }
@@ -73,7 +73,7 @@ public record RentalDto(
         LocalDate givenDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate currentDate = LocalDate.now();
 
-        if (givenDate.isAfter(currentDate)) {
+        if (!givenDate.isEqual(currentDate)) {
             throw new BadParamsException("Start date cannot be earlier than the current date");
         }
     }
