@@ -5,8 +5,6 @@ import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.models.entities.Rental;
 import kg.booster.rental_service.models.enums.Status;
 import kg.booster.rental_service.models.dtos.RentalDto;
-import kg.booster.rental_service.repositories.ClientRepo;
-import kg.booster.rental_service.repositories.DocumentRepo;
 import kg.booster.rental_service.repositories.ItemRepo;
 import kg.booster.rental_service.repositories.RentalRepo;
 import kg.booster.rental_service.services.ClientService;

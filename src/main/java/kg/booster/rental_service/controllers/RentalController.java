@@ -26,9 +26,7 @@ public class RentalController {
     public ResponseEntity<String> createRental(@RequestBody RentalDto rentalDto) {
         rentalService.createRental(rentalDto);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body("Rental operation created successfully");
+        return ResponseEntity.ok("Rental operation created successfully");
     }
 
     @GetMapping
