@@ -24,9 +24,9 @@ public class RentalController {
 
     @PostMapping
     public ResponseEntity<String> createRental(@RequestBody RentalDto rentalDto) {
-        rentalService.createRental(rentalDto);
-
-        return ResponseEntity.ok("Rental operation created successfully");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Rental operation created successfully" + rentalService.createRental(rentalDto));
     }
 
     @GetMapping

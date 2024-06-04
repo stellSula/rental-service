@@ -24,41 +24,38 @@ public record RentalDto(
         @JsonProperty("home_address")
         String address,
         @JsonProperty("item_inventory_numbers")
-        List<Map<String, Integer>> itemInventoryNumbers,
+        List<ItemRentalDto> items,
         @JsonProperty("rental_start_date")
         Date startDate,
         @JsonProperty("rental_end_date")
         Date endDate) {
 
-    public RentalDto {
-        if (isInvalid(firstname)) {
-            throw new BadParamsException("The firstname field must contain at least 1 character and only letters");
-        }
-        if (isInvalid(lastname)) {
-            throw new BadParamsException("The lastname field must contain at least 1 character and only letters");
-        }
-        if (isInvalid(patronymic)) {
-            throw new BadParamsException("The patronymic field must contain at least 1 character and only letters");
-        }
-        if (series == null || series.isEmpty()) {
-            throw new BadParamsException("The series field cannot be empty!");
-        }
-        if (number == null || number.isEmpty()) {
-            throw new BadParamsException("The number field cannot be empty!");
-        }
-        if (itemInventoryNumbers.isEmpty()) {
-            throw new BadParamsException("The list of inventory numbers cannot be empty!");
-        }
-
-        firstname = firstname.trim();
-        lastname = lastname.trim();
-        patronymic = patronymic.trim();
-
-        System.out.println("startDate" + startDate);
-        System.out.println("endDate" + endDate);
-        isNotCurrentDate(startDate);
-        isBeforeEndDate(startDate, endDate);
-    }
+//    public RentalDto {
+//        if (isInvalid(firstname)) {
+//            throw new BadParamsException("The firstname field must contain at least 1 character and only letters");
+//        }
+//        if (isInvalid(lastname)) {
+//            throw new BadParamsException("The lastname field must contain at least 1 character and only letters");
+//        }
+//        if (isInvalid(patronymic)) {
+//            throw new BadParamsException("The patronymic field must contain at least 1 character and only letters");
+//        }
+//        if (series == null || series.isEmpty()) {
+//            throw new BadParamsException("The series field cannot be empty!");
+//        }
+//        if (number == null || number.isEmpty()) {
+//            throw new BadParamsException("The number field cannot be empty!");
+//        }
+//
+//        firstname = firstname.trim();
+//        lastname = lastname.trim();
+//        patronymic = patronymic.trim();
+//
+//        System.out.println("startDate" + startDate);
+//        System.out.println("endDate" + endDate);
+//        isNotCurrentDate(startDate);
+//        isBeforeEndDate(startDate, endDate);
+//    }
 
     private static void isBeforeEndDate(Date startDate, Date endDate) {
         LocalDate givenStartDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

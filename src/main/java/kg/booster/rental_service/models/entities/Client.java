@@ -17,7 +17,7 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    Long id;
 
     @JsonProperty("first_name")
     String firstname;

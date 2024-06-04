@@ -22,7 +22,7 @@ public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    Long id;
 
     @JsonProperty("rental_start_date")
     Date startDate;
@@ -45,8 +45,7 @@ public class Rental {
             joinColumns = @JoinColumn(name = "rental_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    @JsonProperty("item_inventory_numbers")
+    @JsonProperty("items")
     List<Item> items = new ArrayList<>();
-
 
 }

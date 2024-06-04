@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface RentalService {
 
-    void createRental(RentalDto rentalDto);
+    Long createRental(RentalDto rentalDto);
 
     List<Rental> getRentalBy(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status);
 

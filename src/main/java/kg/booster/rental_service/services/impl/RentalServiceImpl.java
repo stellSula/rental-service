@@ -5,9 +5,9 @@ import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.models.entities.Rental;
 import kg.booster.rental_service.models.enums.Status;
 import kg.booster.rental_service.models.dtos.RentalDto;
-import kg.booster.rental_service.repositories.ItemRepo;
 import kg.booster.rental_service.repositories.RentalRepo;
 import kg.booster.rental_service.services.ClientService;
+import kg.booster.rental_service.services.ItemService;
 import kg.booster.rental_service.services.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 
@@ -26,12 +24,12 @@ public class RentalServiceImpl implements RentalService {
 
     private final RentalRepo rentalRepo;
 
-    private final ItemRepo itemRepo;
-
     private final ClientService clientService;
 
+    private final ItemService itemService;
+
     @Override
-    public void createRental(RentalDto rentalDto) {
+    public Long createRental(RentalDto rentalDto) {
         Client client = clientService.createOrUpdateClient(rentalDto);
 
         Rental rental = new Rental();
@@ -39,25 +37,12 @@ public class RentalServiceImpl implements RentalService {
         rental.setStartDate(rentalDto.startDate());
         rental.setEndDate(rentalDto.endDate());
         rental.setStatus(Status.IN_PROCESS);
-
-        for (Map<String, Integer> itemEntry : rentalDto.itemInventoryNumbers())
-            for (Map.Entry<String, Integer> entry : itemEntry.entrySet()) {
-                String inventoryNumber = entry.getKey();
-                int itemCount = entry.getValue();
-
-                Optional<Item> itemOptional = itemRepo.findByInventoryNumber(inventoryNumber.trim());
-                if (itemOptional.isPresent()) {
-                    Item item = itemOptional.get();
-
-                    item.setItemCount(itemCount);
-                    itemRepo.save(item);
-                    rental.getItems().add(item);
-                }
-            }
-
+        rental.setItems(itemService.setItemsCountByInventoryNumbers(rentalDto.items()));
         rental.setPrice(calculateTotalPrice(rentalDto.startDate(), rentalDto.endDate(), rental.getItems()));
 
         rentalRepo.save(rental);
+
+        return rental.getId();
     }
 
     @Override

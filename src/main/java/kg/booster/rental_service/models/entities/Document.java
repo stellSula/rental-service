@@ -17,7 +17,7 @@ public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    Long id;
 
     @JsonProperty("passport_series")
     String series;
