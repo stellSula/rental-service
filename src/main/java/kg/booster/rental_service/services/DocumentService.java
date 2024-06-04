@@ -6,8 +6,6 @@ import kg.booster.rental_service.models.entities.Document;
 
 public interface DocumentService {
 
-    Document createDocument(RentalDto rentalDto);
-
-    Document updateDocument(Client client, RentalDto rentalDto);
+    Document createOrUpdateDocument(Client client, RentalDto rentalDto);
 
 }

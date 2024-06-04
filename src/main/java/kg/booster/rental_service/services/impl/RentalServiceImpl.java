@@ -30,10 +30,9 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public Long createRental(RentalDto rentalDto) {
-        Client client = clientService.createOrUpdateClient(rentalDto);
-
         Rental rental = new Rental();
-        rental.setClient(client);
+
+        rental.setClient(clientService.createOrUpdateClient(rentalDto));
         rental.setStartDate(rentalDto.startDate());
         rental.setEndDate(rentalDto.endDate());
         rental.setStatus(Status.IN_PROCESS);

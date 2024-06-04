@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 
@@ -20,24 +22,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void createItem(Item requestItem) {
-        Optional<Item> itemOptional = itemRepo.findByInventoryNumber(requestItem.getInventoryNumber());
-        Item item;
-        if (itemOptional.isPresent()) {
-            item = itemOptional.get();
+        Item item = itemRepo.findByInventoryNumber(requestItem.getInventoryNumber()).orElseGet(() -> new Item());
 
-            item.setName(requestItem.getName());
-            item.setPricePerDay(requestItem.getPricePerDay());
-            item.setItemCount(requestItem.getItemCount());
-
-            itemRepo.save(item);
-        } else {
-            item = new Item();
-
-            item.setName(requestItem.getName());
-            item.setPricePerDay(requestItem.getPricePerDay());
-            item.setInventoryNumber(requestItem.getInventoryNumber());
-        }
-
+        item.setName(requestItem.getName());
+        item.setPricePerDay(requestItem.getPricePerDay());
+        item.setInventoryNumber(requestItem.getInventoryNumber());
         itemRepo.save(item);
     }
 
@@ -48,19 +37,26 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> setItemsCountByInventoryNumbers(List<ItemRentalDto> items) {
-        List<Item> newItems = new ArrayList<>();
-        for (ItemRentalDto rentalDtoItem : items) {
-            Optional<Item> optionalItem = itemRepo.findByInventoryNumber(rentalDtoItem.inventoryNumber());
-
-            if (optionalItem.isPresent()) {
-                Item item = optionalItem.get();
-
-                item.setItemCount(rentalDtoItem.itemCount());
-                newItems.add(itemRepo.save(item));
-            }
+        List<String> inventoryNumbers = new ArrayList<>();
+        for (ItemRentalDto itemRentalDto : items) {
+            inventoryNumbers.add(itemRentalDto.inventoryNumber());
         }
 
-        return newItems;
+        List<Item> foundItems = itemRepo.findByInventoryNumberIn(inventoryNumbers);
+
+        Map<String, Item> itemMap = foundItems.stream()
+                .collect(Collectors.toMap(Item::getInventoryNumber, item -> item));
+
+        List<Item> updatedItems = new ArrayList<>();
+
+        for (ItemRentalDto rentalDtoItem : items) {
+            Item item = itemMap.get(rentalDtoItem.inventoryNumber());
+
+            item.setItemCount(rentalDtoItem.itemCount());
+            updatedItems.add(itemRepo.save(item));
+        }
+
+        return updatedItems;
     }
 
 }

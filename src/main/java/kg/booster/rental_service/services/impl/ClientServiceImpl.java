@@ -21,27 +21,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client createOrUpdateClient(RentalDto rentalDto) {
-        Optional<Client> clientOptional = clientRepo.findByInn(rentalDto.inn());
-        Client client;
+        Client client = clientRepo.findByInn(rentalDto.inn()).orElseGet(() -> new Client());
 
-        if (clientOptional.isPresent()) {
-            client = clientOptional.get();
-
-            client.setFirstname(rentalDto.firstname());
-            client.setLastname(rentalDto.lastname());
-            client.setPatronymic(rentalDto.patronymic());
-            client.setInn(rentalDto.inn());
-            client.setAddress(rentalDto.address());
-            client.setDocument(documentService.updateDocument(client, rentalDto));
-        } else {
-            client = new Client();
-            client.setFirstname(rentalDto.firstname());
-            client.setLastname(rentalDto.lastname());
-            client.setPatronymic(rentalDto.patronymic());
-            client.setInn(rentalDto.inn());
-            client.setAddress(rentalDto.address());
-            client.setDocument(documentService.createDocument(rentalDto));
-        }
+        client.setFirstname(rentalDto.firstname());
+        client.setLastname(rentalDto.lastname());
+        client.setPatronymic(rentalDto.patronymic());
+        client.setInn(rentalDto.inn());
+        client.setAddress(rentalDto.address());
+        client.setDocument(documentService.createOrUpdateDocument(client, rentalDto));
 
         return clientRepo.save(client);
     }

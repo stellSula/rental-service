@@ -8,8 +8,6 @@ import kg.booster.rental_service.services.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 
 @Service
@@ -18,18 +16,16 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepo documentRepo;
 
     @Override
-    public Document updateDocument(Client client, RentalDto rentalDto) {
+    public Document createOrUpdateDocument(Client client, RentalDto rentalDto) {
         Document document = client.getDocument();
-        document.setSeries(rentalDto.series());
-        document.setNumber(rentalDto.number());
-        return documentRepo.save(document);
-    }
 
-    @Override
-    public Document createDocument(RentalDto rentalDto) {
-        Document document = new Document();
+        if (document == null) {
+            document = new Document();
+        }
+
         document.setSeries(rentalDto.series());
         document.setNumber(rentalDto.number());
+
         return documentRepo.save(document);
     }
 
