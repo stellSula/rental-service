@@ -52,8 +52,10 @@ public class ItemServiceImpl implements ItemService {
         for (ItemRentalDto rentalDtoItem : items) {
             Item item = itemMap.get(rentalDtoItem.inventoryNumber());
 
-            item.setItemCount(rentalDtoItem.itemCount());
-            updatedItems.add(itemRepo.save(item));
+            if (item != null) {
+                item.setItemCount(rentalDtoItem.itemCount());
+                updatedItems.add(itemRepo.save(item));
+            }
         }
 
         return updatedItems;
