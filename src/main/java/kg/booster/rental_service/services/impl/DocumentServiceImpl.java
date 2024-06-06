@@ -17,11 +17,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Document createOrUpdateDocument(Client client, RentalDto rentalDto) {
-        Document document = client.getDocument();
-
-        if (document == null) {
-            document = new Document();
-        }
+        Document document = client.getDocument() == null ? new Document() : client.getDocument();
 
         document.setSeries(rentalDto.series());
         document.setNumber(rentalDto.number());

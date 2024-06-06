@@ -18,7 +18,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<String> createItem(@RequestBody Item requestItem) {
+    public ResponseEntity<?> createItem(@RequestBody Item requestItem) {
         itemService.createItem(requestItem);
 
         return ResponseEntity.ok("Item created successfully");

@@ -40,10 +40,10 @@ public record RentalDto(
         if (isInvalid(patronymic)) {
             throw new BadParamsException("The patronymic field must contain at least 1 character and only letters");
         }
-        if (series == null || series.isEmpty()) {
+        if (series == null || series.isBlank()) {
             throw new BadParamsException("The series field cannot be empty!");
         }
-        if (number == null || number.isEmpty()) {
+        if (number == null || number.isBlank()) {
             throw new BadParamsException("The number field cannot be empty!");
         }
 

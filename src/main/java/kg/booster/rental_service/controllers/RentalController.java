@@ -22,29 +22,22 @@ public class RentalController {
     private final RentalService rentalService;
 
     @PostMapping
-    public ResponseEntity<String> createRental(@RequestBody RentalDto rentalDto) {
+    public ResponseEntity<?> createRental(@RequestBody RentalDto rentalDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Rental operation created successfully" + rentalService.createRental(rentalDto));
+                .body("\"message\" \"Rental operation created successfully\"" + "\"rental_id\" " + rentalService.createRental(rentalDto).getId());
     }
 
     @GetMapping
-    public ResponseEntity<List<Rental>> getRentalBy(
-            @RequestParam(required = false) @JsonProperty("first_name") String firstName,
-            @RequestParam(required = false) @JsonProperty("last_name") String lastName,
-            @RequestParam(required = false) @JsonProperty("middle_name") String patronymic,
-            @RequestParam(required = false) @JsonProperty("item_inventory_name") String itemInventoryNumber,
-            @RequestParam(required = false) @JsonProperty("rental_start_date") Date startDate,
-            @RequestParam(required = false) @JsonProperty("status") Status status
+    public ResponseEntity<?> getRentalBy(
+            @RequestParam(name = "first_name", required = false) String firstName,
+            @RequestParam(name = "last_name",required = false) String lastName,
+            @RequestParam(name = "middle_name",required = false) String patronymic,
+            @RequestParam(name = "item_inventory_number",required = false) String itemInventoryNumber,
+            @RequestParam(name = "rental_start_date",required = false) Date startDate,
+            @RequestParam(name = "status",required = false) Status status
     ) {
-        return ResponseEntity.ok(rentalService.getRentalBy(
-                firstName,
-                lastName,
-                patronymic,
-                itemInventoryNumber,
-                startDate,
-                status)
-        );
+       return null;
     }
 
 }

@@ -29,7 +29,7 @@ public class RentalServiceImpl implements RentalService {
     private final ItemService itemService;
 
     @Override
-    public Long createRental(RentalDto rentalDto) {
+    public Rental createRental(RentalDto rentalDto) {
         Rental rental = new Rental();
 
         rental.setClient(clientService.createOrUpdateClient(rentalDto));
@@ -39,9 +39,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setItems(itemService.setItemsCountByInventoryNumbers(rentalDto.items()));
         rental.setPrice(calculateTotalPrice(rentalDto.startDate(), rentalDto.endDate(), rental.getItems()));
 
-        rentalRepo.save(rental);
-
-        return rental.getId();
+        return rentalRepo.save(rental);
     }
 
     @Override

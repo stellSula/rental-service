@@ -8,8 +8,6 @@ import kg.booster.rental_service.services.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 
 @Service
@@ -21,7 +19,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client createOrUpdateClient(RentalDto rentalDto) {
-        Client client = clientRepo.findByInn(rentalDto.inn()).orElseGet(() -> new Client());
+        Client client = clientRepo.findByInn(rentalDto.inn()).orElseGet(Client::new);
 
         client.setFirstname(rentalDto.firstname());
         client.setLastname(rentalDto.lastname());
