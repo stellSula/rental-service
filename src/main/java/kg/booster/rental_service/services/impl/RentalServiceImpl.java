@@ -1,6 +1,6 @@
 package kg.booster.rental_service.services.impl;
 
-import kg.booster.rental_service.models.entities.Client;
+import kg.booster.rental_service.models.dtos.ResponseCustomRentalDto;
 import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.models.entities.Rental;
 import kg.booster.rental_service.models.enums.Status;
@@ -9,13 +9,16 @@ import kg.booster.rental_service.repositories.RentalRepo;
 import kg.booster.rental_service.services.ClientService;
 import kg.booster.rental_service.services.ItemService;
 import kg.booster.rental_service.services.RentalService;
+import kg.booster.rental_service.specifications.RentalSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 
@@ -43,8 +46,32 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public List<Rental> getRentalBy(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status) {
-        return null;
+    public List<ResponseCustomRentalDto> getRentals(String firstname, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status) {
+        Specification<Rental> specification = Specification
+                .where(RentalSpecifications.hasClientName(firstname))
+                .and(RentalSpecifications.hasClientLastname(lastname))
+                .and(RentalSpecifications.hasClientPatronymic(patronymic))
+                .and(RentalSpecifications.hasItemInventoryNumber(itemInventoryNumber))
+                .and(RentalSpecifications.hasRentalStartDate(startDate))
+                .and(RentalSpecifications.hasRentalStatus(status));
+
+        List<Rental> rentals = rentalRepo.findAll(specification);
+
+        return rentals.stream()
+                .map(rental -> new ResponseCustomRentalDto(
+                        rental.getClient().getFirstname(),
+                        rental.getClient().getLastname(),
+                        rental.getClient().getPatronymic(),
+                        rental.getClient().getInn(),
+                        rental.getClient().getDocument().getSeries(),
+                        rental.getClient().getDocument().getNumber(),
+                        rental.getClient().getAddress(),
+                        rental.getItems(),
+                        rental.getStartDate(),
+                        rental.getEndDate(),
+                        rental.getStatus()
+                ))
+                .collect(Collectors.toList());
     }
 
     private double calculateTotalPrice(Date startDate, Date endDate, List<Item> items) {

@@ -1,5 +1,6 @@
 package kg.booster.rental_service.services;
 
+import kg.booster.rental_service.models.dtos.ResponseCustomRentalDto;
 import kg.booster.rental_service.models.entities.Rental;
 import kg.booster.rental_service.models.enums.Status;
 import kg.booster.rental_service.models.dtos.RentalDto;
@@ -11,6 +12,6 @@ public interface RentalService {
 
     Rental createRental(RentalDto rentalDto);
 
-    List<Rental> getRentalBy(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status);
+    List<ResponseCustomRentalDto> getRentals(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status);
 
 }
