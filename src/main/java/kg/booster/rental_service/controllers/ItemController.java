@@ -19,9 +19,9 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<?> createItem(@RequestBody Item requestItem) {
-        itemService.createItem(requestItem);
-
-        return ResponseEntity.ok("Item created successfully");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("\"message\" \"Item created successfully\"" + "\n\"rental_id\" " + itemService.createItem(requestItem).getId());
     }
 
     @GetMapping

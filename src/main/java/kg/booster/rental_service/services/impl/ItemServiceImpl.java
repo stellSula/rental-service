@@ -21,13 +21,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepo itemRepo;
 
     @Override
-    public void createItem(Item requestItem) {
-        Item item = itemRepo.findByInventoryNumber(requestItem.getInventoryNumber()).orElseGet(() -> new Item());
+    public Item createItem(Item requestItem) {
+        Item item = itemRepo.findByInventoryNumber(requestItem.getInventoryNumber()).orElseGet(Item::new);
 
         item.setName(requestItem.getName());
         item.setPricePerDay(requestItem.getPricePerDay());
         item.setInventoryNumber(requestItem.getInventoryNumber());
-        itemRepo.save(item);
+        return itemRepo.save(item);
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ItemService {
 
-    void createItem(Item item);
+    Item createItem(Item item);
 
     List<Item> getAllItems();
 
