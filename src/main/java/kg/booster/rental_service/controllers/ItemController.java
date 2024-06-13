@@ -21,7 +21,7 @@ public class ItemController {
     public ResponseEntity<?> createItem(@RequestBody Item requestItem) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("\"message\" \"Item created successfully\"" + "\n\"rental_id\" " + itemService.createItem(requestItem).getId());
+                .body("\"message\" \"Item created successfully\"" + "\n\"rental_id\" " + itemService.createItem(requestItem));
     }
 
     @GetMapping

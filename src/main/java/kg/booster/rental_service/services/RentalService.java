@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface RentalService {
 
-    Rental createRental(RentalDto rentalDto);
+    Long createRental(RentalDto rentalDto);
 
     List<ResponseCustomRentalDto> getRentals(String name, String lastname, String patronymic, String itemInventoryNumber, Date startDate, Status status);
 

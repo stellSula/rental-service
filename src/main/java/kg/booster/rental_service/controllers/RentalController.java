@@ -22,7 +22,7 @@ public class RentalController {
     public ResponseEntity<?> createRental(@RequestBody RentalDto rentalDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("\"message\" \"Rental operation created successfully\"" + "\n\"rental_id\" " + rentalService.createRental(rentalDto).getId());
+                .body("\"message\" \"Rental operation created successfully\"" + "\n\"rental_id\" " + rentalService.createRental(rentalDto));
     }
 
     @GetMapping

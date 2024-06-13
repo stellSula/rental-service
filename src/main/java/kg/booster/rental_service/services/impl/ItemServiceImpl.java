@@ -1,5 +1,6 @@
 package kg.booster.rental_service.services.impl;
 
+import kg.booster.rental_service.mappers.ItemMapper;
 import kg.booster.rental_service.models.dtos.ItemRentalDto;
 import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.repositories.ItemRepo;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -20,14 +20,17 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepo itemRepo;
 
+    private final ItemMapper itemMapper;
+
     @Override
-    public Item createItem(Item requestItem) {
+    public Long createItem(Item requestItem) {
         Item item = itemRepo.findByInventoryNumber(requestItem.getInventoryNumber()).orElseGet(Item::new);
 
-        item.setName(requestItem.getName());
-        item.setPricePerDay(requestItem.getPricePerDay());
-        item.setInventoryNumber(requestItem.getInventoryNumber());
-        return itemRepo.save(item);
+        item = itemMapper.requestItemToItem(item, requestItem);
+
+        item = itemRepo.save(item);
+
+        return item.getId();
     }
 
     @Override

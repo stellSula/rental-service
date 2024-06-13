@@ -33,7 +33,7 @@ public class Client {
     @JsonProperty("home_address")
     String address;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "document_id")
     Document document;
 

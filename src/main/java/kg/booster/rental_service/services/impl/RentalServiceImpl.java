@@ -1,5 +1,6 @@
 package kg.booster.rental_service.services.impl;
 
+import kg.booster.rental_service.mappers.CreateRentalMapper;
 import kg.booster.rental_service.models.dtos.ResponseCustomRentalDto;
 import kg.booster.rental_service.models.entities.Item;
 import kg.booster.rental_service.models.entities.Rental;
@@ -31,18 +32,21 @@ public class RentalServiceImpl implements RentalService {
 
     private final ItemService itemService;
 
+    private final CreateRentalMapper createRentalMapper;
+
     @Override
-    public Rental createRental(RentalDto rentalDto) {
-        Rental rental = new Rental();
-
-        rental.setClient(clientService.createOrUpdateClient(rentalDto));
-        rental.setStartDate(rentalDto.startDate());
-        rental.setEndDate(rentalDto.endDate());
-        rental.setStatus(Status.IN_PROCESS);
-        rental.setItems(itemService.setItemsCountByInventoryNumbers(rentalDto.items()));
+    public Long createRental(RentalDto rentalDto) {
+        Rental rental = createRentalMapper.rentalDtoToRental(
+                clientService.createOrUpdateClient(rentalDto),
+                rentalDto.startDate(),
+                rentalDto.endDate(),
+                Status.IN_PROCESS,
+                itemService.setItemsCountByInventoryNumbers(rentalDto.items())
+        );
         rental.setPrice(calculateTotalPrice(rentalDto.startDate(), rentalDto.endDate(), rental.getItems()));
+        rental = rentalRepo.save(rental);
 
-        return rentalRepo.save(rental);
+        return rental.getId();
     }
 
     @Override
